@@ -6,3 +6,4 @@ tables
 xlsxwriter
 xlrd
 pymongo
+mongomock
