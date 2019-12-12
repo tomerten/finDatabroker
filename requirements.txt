@@ -5,5 +5,4 @@ termcolor
 tables
 xlsxwriter
 xlrd
-sqlite3
 pymongo
