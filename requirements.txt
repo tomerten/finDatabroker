@@ -1,0 +1,9 @@
+click
+pandas
+h5py
+termcolor
+tables
+xlsxwriter
+xlrd
+sqlite
+pymongo
