@@ -46,5 +46,5 @@ def test__load___ok():
     broker.save(objs, db, col, index, unique=True)
     assert broker.get_number_of_documents(db, col) == 1
 
-    data = broker.load(db, col, {'year':2019})
+    data = broker.load(db, col, {'year': 2019})
     assert objs == data
