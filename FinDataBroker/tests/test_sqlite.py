@@ -1,7 +1,5 @@
 import pytest, os
-import dataset
 from FinDataBroker.DataBrokerSqlite import DataBrokerSqlite
-import sqlite3
 
 
 # @pytest.fixture(scope='function')
