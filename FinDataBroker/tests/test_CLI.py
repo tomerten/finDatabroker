@@ -4,7 +4,7 @@ import dataset
 from click.testing import CliRunner
 from financejson.validate import validate_file
 from pymongo import MongoClient
-
+import mongomock
 from FinDataBroker.CLI import write2mongo, write2sqlite
 
 
@@ -33,7 +33,7 @@ def test_write2mongo_invalid_file():
         result = runner.invoke(write2mongo, ['test.json', 'boe', 'boe'])
         assert result.exit_code == 1
 
-
+@mongomock.patch(servers=(('localhost', 27017),))
 def test_write2mongo_valid_file():
     runner = CliRunner()
 
@@ -56,7 +56,6 @@ def test_write2mongo_valid_file():
         with open('test.json', 'w') as f:
             dump(data, f)
         validate_file('test.json')
-
         result = runner.invoke(write2mongo, ['test.json', 'localhost:27017', 'boe'])
         assert result.exit_code == 0
 
