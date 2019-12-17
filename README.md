@@ -78,6 +78,6 @@ FinDataBroker write2sqlite /path/to/financejsonfile sqlite:///database.db
 
 ## License
 [GNU General Public License 
-v3.0](https://github.com/tomerten/FinDataBroker/blob/master/LICENSE)
+v3.0](https://github.com/tomerten/finDatabroker/blob/master/LICENCE)
 
 
