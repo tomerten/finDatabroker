@@ -24,8 +24,7 @@ setup(
     test_requires=['pytest'],
     python_requires='>=3.6',
     include_package_data=True,
-    # package_data={'financejson': ['schema.json'], },
-    # entry_points={'console_scripts': ["financejson = financejson.cli:main"]},
+    entry_points={'console_scripts': ["FinDataBroker = FinDataBroker.cli:main"]},
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',

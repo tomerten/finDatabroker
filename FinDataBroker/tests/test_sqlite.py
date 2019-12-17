@@ -67,3 +67,9 @@ def test_load_ok(db):
     retrieved = dbsql.load('test', {'boe': 'hallo'})
     assert len(retrieved) == 1
     assert retrieved[0]['boe'] == 'hallo'
+
+    dbsql.save({"year": 2019}, 'test', ['boe', 'year'])
+    retrieved = dbsql.load('test', {'boe': 'hallo'})
+    assert len(retrieved) == 1
+    assert retrieved[0]['boe'] == 'hallo'
+    assert len(dbsql.db["test"]) == 2
