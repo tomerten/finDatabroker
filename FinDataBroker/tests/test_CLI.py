@@ -1,13 +1,11 @@
-from click.testing import CliRunner
-from FinDataBroker.CLI import write2mongo, write2sqlite
 from json import dump
-from pytest import raises
-import os
-from pymongo import MongoClient
-from financejson.validate import validate_file
-from FinDataBroker.DataBrokerMongoDb import DataBrokerMongoDb
-from FinDataBroker.IndexingMap import indexMap
+
 import dataset
+from click.testing import CliRunner
+from financejson.validate import validate_file
+from pymongo import MongoClient
+
+from FinDataBroker.CLI import write2mongo, write2sqlite
 
 
 def test_write2mongo_invalid_CLI():
