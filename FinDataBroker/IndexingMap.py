@@ -174,14 +174,20 @@ indexMap = {
     ],
     "yh_indexTrend_estimates": [
         ('index_symbol',  ASCENDING),
+        ('date', ASCENDING)
         ('period',  ASCENDING)
     ],
+    # 02-01-2020 : added combination of period and date as index
+    # otherwise next quarter and 0y not unique.
     "yh_indexTrend": [
         ('index_symbol',  ASCENDING),
-        ('date',  ASCENDING)
+        ('date',  ASCENDING),
     ],
+    # 02-01-2020 : added combination of period and date as index
+    # otherwise next quarter and 0y not unique.
     "yh_industryTrend_estimates": [
         ('index_symbol',  ASCENDING),
+        ('date', ASCENDING),
         ('period',  ASCENDING)
     ],
     "yh_industryTrend": [
@@ -226,7 +232,8 @@ indexMap = {
     ],
     "yh_recommendationTrend": [
         ('index_symbol',  ASCENDING),
-        ('date',  ASCENDING)
+        ('date',  ASCENDING),
+        ('period', ASCENDING)
     ],
     "yh_secFilings": [
         ('index_symbol',  ASCENDING),
@@ -241,7 +248,6 @@ indexMap = {
     "yh_sectorTrend": [
         ('index_symbol',  ASCENDING),
         ('date',  ASCENDING),
-        ('period',  ASCENDING)
     ],
     "yh_summaryDetail": [
         ('index_symbol',  ASCENDING),
