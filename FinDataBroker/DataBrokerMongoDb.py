@@ -1,8 +1,11 @@
-from .Template import DataBroker
 from pprint import pprint
-from typing import List, Tuple, Dict
-from tqdm import tqdm
+from typing import Any, Dict, List, Tuple, Union
+
+from pymongo.errors import BulkWriteError
 from termcolor import colored
+from tqdm import tqdm
+
+from .Template import DataBroker
 
 
 class DataBrokerMongoDb(DataBroker):
@@ -26,8 +29,8 @@ class DataBrokerMongoDb(DataBroker):
         """
         dbm = self.client[db]
 
-        print(dbm.collection_names())
-        status = dbm.command('dbstats')
+        print(sorted(dbm.collection_names()))
+        status = dbm.command("dbstats")
 
         pprint(status)
 
@@ -48,27 +51,14 @@ class DataBrokerMongoDb(DataBroker):
 
         return n
 
-    def _create_index(self, db: str, col: str, indexTupleList: List[Tuple], unique=True):
-        """
-        Private method to create index if
-        it does not already exists.
-
-        :param db: database name
-        :type db: str
-        :param col: collection name
-        :type col: str
-        :param indexTupleList: list of tuples to create index
-        :type indexTupleList: list of tuples
-              the tuples are (field, ASCENDING/DESCENDING)
-        :param unique:
-        :type unique: bool
-                Default : True (allows double check to prevent duplicates)
-
-        """
-        colm = self.client[db][col]
-        colm.create_index(indexTupleList, unique=unique)
-
-    def save(self, data: List[Dict], db: str, col: str, indexTupleList: List[Tuple], unique=True):
+    def save(
+        self,
+        data: Union[List[Dict], Dict],
+        db: str,
+        col: str,
+        indexTupleList: List[Tuple[str, Any]],
+        unique: bool = True,
+    ):
         """
         Public method to save the data to
         a collection.
@@ -76,44 +66,31 @@ class DataBrokerMongoDb(DataBroker):
         User should take care that data is given
         in the correct format (list of dicts, bjson)
 
-        :param data: data to save
-        :type data: list of dicts (bjson)
-        :param db: database name
-        :type db: str
-        :param col: collection name
-        :type col: str
-        :param indexTupleList:tuples define the index
-        :type indexTupleListlist of tuples
-        :param unique: index keys unique ? (default: True)
-        :type unique:bool
+        Arguments:
+        ----------
+        data: Union[List[Dict], Dict],
+            data to save
+        db: str
+            database name
+        col: str
+            collection name
+        indexTupleList: List[Tuple[str, Any]]
+            tuples define the index
+        unique: Bool
+            index keys unique ? (default: True)
         """
-        self._create_index(db, col, indexTupleList, unique=unique)
         colm = self.client[db][col]
-        # ref : https://docs.mongodb.com/php-library/master/reference/method/MongoDBCollection-insertMany/
-        # ordered False will continue writing if one fails
-        # does not seem to work properly - TODO: checkout if this can be improved
-        temp = None
+        colm.create_index(indexTupleList, unique=unique)
+
         if not isinstance(data, list):
-            data = [data]
+            datal: List = [data]
+        else:
+            datal = data
 
-        for row in tqdm(data):
-            try:
-                if colm.count_documents({k[0]: row[k[0]] for k in indexTupleList}, limit=1) == 0:
-                    colm.insert_one(row)
-                else:
-                    if temp == row[indexTupleList[0][0]]:
-                        continue
-                    else:
-                        temp = row[indexTupleList[0][0]]
-
-                        _list = [str(row[k[0]]) for k in indexTupleList]
-                        tup = ','.join(_list)
-                        print(colored(f"{tup} already exists", 'red'))
-            except:
-                print([k[0] for k in indexTupleList])
-                print(row)
-                break
-            # colm.insert_many(data, ordered=False)
+        try:
+            colm.insert_many(datal, ordered=False)
+        except BulkWriteError:
+            pass
 
     def load(self, db: str, col: str, searchdict: Dict):
         """
@@ -129,4 +106,10 @@ class DataBrokerMongoDb(DataBroker):
         :return: requested data as list of dicts
         """
         colm = self.client[db][col]
-        return list(colm.find(searchdict, {'_id': False}))
+        cursor = colm.find(searchdict, {"_id": False})
+
+        out = []
+        for doc in cursor:
+            out.append(doc)
+
+        return out
