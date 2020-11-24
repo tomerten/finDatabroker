@@ -92,7 +92,7 @@ class DataBrokerMongoDb(DataBroker):
         except BulkWriteError:
             pass
 
-    def load(self, db: str, col: str, searchdict: Dict):
+    def load(self, db: str, col: str, searchdict: Dict, selectiondict={}):
         """
         Publid method to load data from the database.
 
@@ -106,10 +106,32 @@ class DataBrokerMongoDb(DataBroker):
         :return: requested data as list of dicts
         """
         colm = self.client[db][col]
-        cursor = colm.find(searchdict, {"_id": False})
+        cursor = colm.find(searchdict, {**{"_id": False}, **selectiondict})
 
         out = []
         for doc in cursor:
             out.append(doc)
 
         return out
+
+    def update(self, db: str, col: str, myquery, newvalues):
+        """
+        Public method to update records in a
+        collection.
+
+        Arguments:
+        ----------
+        db          : str
+            database to update
+        col         : str
+            collection to update
+        myquery     : dict
+            query to select records to update
+        newvalues   : mongodb set dict
+            mongodb set field dict eg. { "$set": { "name": "Minnie" } }
+
+        """
+        colm = self.client[db][col]
+        x = colm.update_many(myquery, newvalues)
+
+        print(x.modified_count, "documents updated.")
